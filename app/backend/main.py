@@ -301,3 +301,5 @@ def reload_model():
     load_model_from_s3()
     return {"status": "ok", "model_loaded": model_bundle is not None}
 
+#   C I / C D   t e s t  
+ 
