@@ -1,0 +1,6 @@
+
+venv/
+venv_tomato_mlops/
+**/venv*/
+**/__pycache__/
+*.pyc
