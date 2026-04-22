@@ -275,4 +275,4 @@ aws lambda update-function-code \
 
 ## 📄 License
 
-This project is developed as part of an AIT thesis. All rights reserved.
+This project is developed as part of an Project at AIT. All rights reserved.
