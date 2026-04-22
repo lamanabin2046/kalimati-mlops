@@ -20,12 +20,56 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1
       
-      - name: Deploy All Lambda Functions
+      - name: Deploy Drift Detector
         run: |
-          for func in drift-detector weather-ingestion noc-diesel-scraper news-event-ingestion nrb-inflation-check build-event-features build-dataset run-training reload-model; do
-            echo "Deploying $func..."
-            cd lambdas/$func
-            zip -r function.zip lambda_function.py
-            aws lambda update-function-code --function-name ${func//-detection/} --zip-file fileb://function.zip
-            cd ../..
-          done
+          cd lambdas/drift-detector
+          zip -r function.zip lambda_function.py
+          aws lambda update-function-code --function-name drift-detection --zip-file fileb://function.zip
+      
+      - name: Deploy Weather Ingestion
+        run: |
+          cd lambdas/weather-ingestion
+          zip -r function.zip lambda_function.py
+          aws lambda update-function-code --function-name weather-ingestion --zip-file fileb://function.zip
+      
+      - name: Deploy NOC Diesel Scraper
+        run: |
+          cd lambdas/noc-diesel-scraper
+          zip -r function.zip lambda_function.py
+          aws lambda update-function-code --function-name noc-diesel-scraper --zip-file fileb://function.zip
+      
+      - name: Deploy News Event Ingestion
+        run: |
+          cd lambdas/news-event-ingestion
+          zip -r function.zip lambda_function.py
+          aws lambda update-function-code --function-name news-event-ingestion --zip-file fileb://function.zip
+      
+      - name: Deploy NRB Inflation Check
+        run: |
+          cd lambdas/nrb-inflation-check
+          zip -r function.zip lambda_function.py
+          aws lambda update-function-code --function-name nrb-inflation-check --zip-file fileb://function.zip
+      
+      - name: Deploy Build Event Features
+        run: |
+          cd lambdas/build-event-features
+          zip -r function.zip lambda_function.py
+          aws lambda update-function-code --function-name build-event-features --zip-file fileb://function.zip
+      
+      - name: Deploy Build Dataset
+        run: |
+          cd lambdas/build-dataset
+          zip -r function.zip lambda_function.py
+          aws lambda update-function-code --function-name build-dataset --zip-file fileb://function.zip
+      
+      - name: Deploy Run Training
+        run: |
+          cd lambdas/run-training
+          zip -r function.zip lambda_function.py
+          aws lambda update-function-code --function-name run-training --zip-file fileb://function.zip
+      
+      - name: Deploy Reload Model
+        run: |
+          cd lambdas/reload-model
+          zip -r function.zip lambda_function.py
+          aws lambda update-function-code --function-name reload-model --zip-file fileb://function.zip
