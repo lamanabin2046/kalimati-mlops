@@ -17,10 +17,73 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1
-      
-      - name: Deploy Drift Detector
+
+      - name: Deploy weather-ingestion
+        run: |
+          cd lambdas/weather-ingestion
+          zip -r function.zip lambda_function.py
+          aws lambda update-function-code \
+            --function-name weather-ingestion \
+            --zip-file fileb://function.zip
+
+      - name: Deploy noc-diesel-scraper
+        run: |
+          cd lambdas/noc-diesel-scraper
+          zip -r function.zip lambda_function.py
+          aws lambda update-function-code \
+            --function-name noc-diesel-scraper \
+            --zip-file fileb://function.zip
+
+      - name: Deploy news-event-ingestion
+        run: |
+          cd lambdas/news-event-ingestion
+          zip -r function.zip lambda_function.py
+          aws lambda update-function-code \
+            --function-name news-event-ingestion \
+            --zip-file fileb://function.zip
+
+      - name: Deploy nrb-inflation-check
+        run: |
+          cd lambdas/nrb-inflation-check
+          zip -r function.zip lambda_function.py
+          aws lambda update-function-code \
+            --function-name nrb-inflation-check \
+            --zip-file fileb://function.zip
+
+      - name: Deploy build-event-features
+        run: |
+          cd lambdas/build-event-features
+          zip -r function.zip lambda_function.py
+          aws lambda update-function-code \
+            --function-name build-event-features \
+            --zip-file fileb://function.zip
+
+      - name: Deploy build-dataset
+        run: |
+          cd lambdas/build-dataset
+          zip -r function.zip lambda_function.py
+          aws lambda update-function-code \
+            --function-name build-dataset \
+            --zip-file fileb://function.zip
+
+      - name: Deploy run-training
+        run: |
+          cd lambdas/run-training
+          zip -r function.zip lambda_function.py
+          aws lambda update-function-code \
+            --function-name run-training \
+            --zip-file fileb://function.zip
+
+      - name: Deploy reload-model
+        run: |
+          cd lambdas/reload-model
+          zip -r function.zip lambda_function.py
+          aws lambda update-function-code \
+            --function-name reload-model \
+            --zip-file fileb://function.zip
+
+      - name: Deploy drift-detector
         run: |
           cd lambdas/drift-detector
           zip -r function.zip lambda_function.py
