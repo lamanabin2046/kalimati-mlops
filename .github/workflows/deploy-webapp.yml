@@ -1,0 +1,74 @@
+name: Deploy Web App to EC2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'app/**'
+
+jobs:
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Build React App
+        run: |
+          cd app/frontend
+          npm install
+          npm run build
+      
+      - name: Deploy to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: 52.201.197.75
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "app/frontend/build/*"
+          target: "/home/ubuntu/app-deploy/"
+          strip_components: 3
+      
+      - name: Update Nginx and Restart Services
+        uses: appleboy/ssh-action@master
+        with:
+          host: 52.201.197.75
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            sudo rm -rf /var/www/html/*
+            sudo cp -r /home/ubuntu/app-deploy/* /var/www/html/
+            sudo systemctl reload nginx
+            echo "✅ Frontend deployed!"
+
+  deploy-backend:
+    runs-on: ubuntu-latest
+    needs: deploy-frontend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Deploy Backend to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: 52.201.197.75
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "app/backend/main.py"
+          target: "/home/ubuntu/app/backend/"
+          strip_components: 2
+      
+      - name: Restart FastAPI Service
+        uses: appleboy/ssh-action@master
+        with:
+          host: 52.201.197.75
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            sudo systemctl restart kalimati-api
+            echo "✅ Backend restarted!"
