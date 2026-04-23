@@ -7,9 +7,7 @@
       "Next": "Notify Scraping Done",
       "Catch": [
         {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
+          "ErrorEquals": ["States.ALL"],
           "Next": "Notify Pipeline Failed"
         }
       ],
@@ -24,15 +22,7 @@
                 "FunctionName": "weather-ingestion",
                 "Payload": {}
               },
-              "Retry": [
-                {
-                  "ErrorEquals": [
-                    "States.ALL"
-                  ],
-                  "MaxAttempts": 2,
-                  "IntervalSeconds": 30
-                }
-              ],
+              "Retry": [{"ErrorEquals": ["States.ALL"], "MaxAttempts": 2, "IntervalSeconds": 30}],
               "End": true
             }
           }
@@ -47,15 +37,7 @@
                 "FunctionName": "noc-diesel-scraper",
                 "Payload": {}
               },
-              "Retry": [
-                {
-                  "ErrorEquals": [
-                    "States.ALL"
-                  ],
-                  "MaxAttempts": 2,
-                  "IntervalSeconds": 30
-                }
-              ],
+              "Retry": [{"ErrorEquals": ["States.ALL"], "MaxAttempts": 2, "IntervalSeconds": 30}],
               "End": true
             }
           }
@@ -70,15 +52,7 @@
                 "FunctionName": "news-event-ingestion",
                 "Payload": {}
               },
-              "Retry": [
-                {
-                  "ErrorEquals": [
-                    "States.ALL"
-                  ],
-                  "MaxAttempts": 2,
-                  "IntervalSeconds": 30
-                }
-              ],
+              "Retry": [{"ErrorEquals": ["States.ALL"], "MaxAttempts": 2, "IntervalSeconds": 30}],
               "End": true
             }
           }
@@ -95,12 +69,8 @@
                 "TaskDefinition": "kalimati-scraper-task",
                 "NetworkConfiguration": {
                   "AwsvpcConfiguration": {
-                    "Subnets": [
-                      "subnet-0129adadb19f31514"
-                    ],
-                    "SecurityGroups": [
-                      "sg-0685ac55b93979937"
-                    ],
+                    "Subnets": ["subnet-0129adadb19f31514"],
+                    "SecurityGroups": ["sg-0685ac55b93979937"],
                     "AssignPublicIp": "ENABLED"
                   }
                 },
@@ -108,25 +78,12 @@
                   "ContainerOverrides": [
                     {
                       "Name": "kalimati-scraper",
-                      "Environment": [
-                        {
-                          "Name": "SCRAPER_NAME",
-                          "Value": "kalimati_scraper"
-                        }
-                      ]
+                      "Environment": [{"Name": "SCRAPER_NAME", "Value": "kalimati_scraper"}]
                     }
                   ]
                 }
               },
-              "Retry": [
-                {
-                  "ErrorEquals": [
-                    "States.ALL"
-                  ],
-                  "MaxAttempts": 2,
-                  "IntervalSeconds": 60
-                }
-              ],
+              "Retry": [{"ErrorEquals": ["States.ALL"], "MaxAttempts": 2, "IntervalSeconds": 60}],
               "End": true
             }
           }
@@ -143,12 +100,8 @@
                 "TaskDefinition": "kalimati-scraper-task",
                 "NetworkConfiguration": {
                   "AwsvpcConfiguration": {
-                    "Subnets": [
-                      "subnet-0129adadb19f31514"
-                    ],
-                    "SecurityGroups": [
-                      "sg-0685ac55b93979937"
-                    ],
+                    "Subnets": ["subnet-0129adadb19f31514"],
+                    "SecurityGroups": ["sg-0685ac55b93979937"],
                     "AssignPublicIp": "ENABLED"
                   }
                 },
@@ -156,25 +109,12 @@
                   "ContainerOverrides": [
                     {
                       "Name": "kalimati-scraper",
-                      "Environment": [
-                        {
-                          "Name": "SCRAPER_NAME",
-                          "Value": "kalimati_supply_scraper"
-                        }
-                      ]
+                      "Environment": [{"Name": "SCRAPER_NAME", "Value": "kalimati_supply_scraper"}]
                     }
                   ]
                 }
               },
-              "Retry": [
-                {
-                  "ErrorEquals": [
-                    "States.ALL"
-                  ],
-                  "MaxAttempts": 2,
-                  "IntervalSeconds": 60
-                }
-              ],
+              "Retry": [{"ErrorEquals": ["States.ALL"], "MaxAttempts": 2, "IntervalSeconds": 60}],
               "End": true
             }
           }
@@ -191,12 +131,8 @@
                 "TaskDefinition": "kalimati-scraper-task",
                 "NetworkConfiguration": {
                   "AwsvpcConfiguration": {
-                    "Subnets": [
-                      "subnet-0129adadb19f31514"
-                    ],
-                    "SecurityGroups": [
-                      "sg-0685ac55b93979937"
-                    ],
+                    "Subnets": ["subnet-0129adadb19f31514"],
+                    "SecurityGroups": ["sg-0685ac55b93979937"],
                     "AssignPublicIp": "ENABLED"
                   }
                 },
@@ -204,23 +140,32 @@
                   "ContainerOverrides": [
                     {
                       "Name": "kalimati-scraper",
-                      "Environment": [
-                        {
-                          "Name": "SCRAPER_NAME",
-                          "Value": "nrb_exchange_rate"
-                        }
-                      ]
+                      "Environment": [{"Name": "SCRAPER_NAME", "Value": "nrb_exchange_rate"}]
                     }
                   ]
                 }
               },
+              "Retry": [{"ErrorEquals": ["States.ALL"], "MaxAttempts": 2, "IntervalSeconds": 60}],
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "NRB Inflation Check",
+          "States": {
+            "NRB Inflation Check": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "Parameters": {
+                "FunctionName": "arn:aws:lambda:us-east-1:135723932609:function:nrb-inflation-check",
+                "Payload": {}
+              },
               "Retry": [
                 {
-                  "ErrorEquals": [
-                    "States.ALL"
-                  ],
-                  "MaxAttempts": 2,
-                  "IntervalSeconds": 60
+                  "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException"],
+                  "IntervalSeconds": 2,
+                  "MaxAttempts": 3,
+                  "BackoffRate": 2
                 }
               ],
               "End": true
@@ -238,14 +183,7 @@
         "Message": "All 7 scrapers completed successfully. Starting preprocessing..."
       },
       "Next": "Build Event Features",
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "Next": "Build Event Features"
-        }
-      ]
+      "Catch": [{"ErrorEquals": ["States.ALL"], "Next": "Build Event Features"}]
     },
     "Build Event Features": {
       "Type": "Task",
@@ -254,24 +192,9 @@
         "FunctionName": "build-event-features",
         "Payload": {}
       },
-      "Retry": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "MaxAttempts": 2,
-          "IntervalSeconds": 30
-        }
-      ],
+      "Retry": [{"ErrorEquals": ["States.ALL"], "MaxAttempts": 2, "IntervalSeconds": 30}],
       "Next": "Build Dataset",
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "Next": "Notify Pipeline Failed"
-        }
-      ]
+      "Catch": [{"ErrorEquals": ["States.ALL"], "Next": "Notify Pipeline Failed"}]
     },
     "Build Dataset": {
       "Type": "Task",
@@ -280,24 +203,9 @@
         "FunctionName": "build-dataset",
         "Payload": {}
       },
-      "Retry": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "MaxAttempts": 2,
-          "IntervalSeconds": 30
-        }
-      ],
+      "Retry": [{"ErrorEquals": ["States.ALL"], "MaxAttempts": 2, "IntervalSeconds": 30}],
       "Next": "Notify Preprocessing Done",
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "Next": "Notify Pipeline Failed"
-        }
-      ]
+      "Catch": [{"ErrorEquals": ["States.ALL"], "Next": "Notify Pipeline Failed"}]
     },
     "Notify Preprocessing Done": {
       "Type": "Task",
@@ -308,14 +216,7 @@
         "Message": "Preprocessing completed. Feature dataset built successfully. Starting model training..."
       },
       "Next": "Train Model",
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "Next": "Train Model"
-        }
-      ]
+      "Catch": [{"ErrorEquals": ["States.ALL"], "Next": "Train Model"}]
     },
     "Train Model": {
       "Type": "Task",
@@ -324,24 +225,20 @@
         "FunctionName": "run-training",
         "Payload": {}
       },
-      "Retry": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "MaxAttempts": 1,
-          "IntervalSeconds": 60
-        }
-      ],
+      "Retry": [{"ErrorEquals": ["States.ALL"], "MaxAttempts": 1, "IntervalSeconds": 60}],
       "Next": "Drift Detector",
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "Next": "Notify Pipeline Failed"
-        }
-      ]
+      "Catch": [{"ErrorEquals": ["States.ALL"], "Next": "Notify Pipeline Failed"}]
+    },
+    "Drift Detector": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "drift-detection",
+        "Payload": {}
+      },
+      "Retry": [{"ErrorEquals": ["States.ALL"], "MaxAttempts": 1, "IntervalSeconds": 30}],
+      "Next": "Notify Training Done",
+      "Catch": [{"ErrorEquals": ["States.ALL"], "Next": "Notify Training Done"}]
     },
     "Notify Training Done": {
       "Type": "Task",
@@ -352,14 +249,7 @@
         "Message": "XGBoost model training completed successfully! 7 models saved to S3. Reloading app..."
       },
       "Next": "Reload Model",
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "Next": "Reload Model"
-        }
-      ]
+      "Catch": [{"ErrorEquals": ["States.ALL"], "Next": "Reload Model"}]
     },
     "Reload Model": {
       "Type": "Task",
@@ -368,24 +258,9 @@
         "FunctionName": "reload-model",
         "Payload": {}
       },
-      "Retry": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "MaxAttempts": 3,
-          "IntervalSeconds": 30
-        }
-      ],
+      "Retry": [{"ErrorEquals": ["States.ALL"], "MaxAttempts": 3, "IntervalSeconds": 30}],
       "Next": "Notify Pipeline Success",
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "Next": "Notify Pipeline Failed"
-        }
-      ]
+      "Catch": [{"ErrorEquals": ["States.ALL"], "Next": "Notify Pipeline Failed"}]
     },
     "Notify Pipeline Success": {
       "Type": "Task",
@@ -396,14 +271,7 @@
         "Message": "Full pipeline completed! Scrapers \u2192 Preprocessing \u2192 Training \u2192 App updated. Tomato price predictions are fresh!"
       },
       "Next": "Pipeline Success",
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "Next": "Pipeline Success"
-        }
-      ]
+      "Catch": [{"ErrorEquals": ["States.ALL"], "Next": "Pipeline Success"}]
     },
     "Pipeline Success": {
       "Type": "Succeed"
@@ -417,45 +285,12 @@
         "Message": "Pipeline failed! Please check AWS Step Functions console for details."
       },
       "Next": "Pipeline Failed",
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "Next": "Pipeline Failed"
-        }
-      ]
+      "Catch": [{"ErrorEquals": ["States.ALL"], "Next": "Pipeline Failed"}]
     },
     "Pipeline Failed": {
       "Type": "Fail",
       "Error": "PipelineFailed",
       "Cause": "One or more pipeline steps failed"
-    },
-    "Drift Detector": {
-      "Type": "Task",
-      "Resource": "arn:aws:states:::lambda:invoke",
-      "Parameters": {
-        "FunctionName": "drift-detection",
-        "Payload": {}
-      },
-      "Retry": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "MaxAttempts": 1,
-          "IntervalSeconds": 30
-        }
-      ],
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "Next": "Notify Training Done"
-        }
-      ],
-      "Next": "Notify Training Done"
     }
   }
 }
