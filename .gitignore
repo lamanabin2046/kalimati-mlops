@@ -1,6 +1,72 @@
+# Environment & Secrets
+.env
+.env.*
+.env.local
+.env.development
+.env.production
+*.pem
+*.key
 
+# Data Files
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.json.bak
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependencies
+node_modules/
+vendor/
+.venv/
 venv/
-venv_tomato_mlops/
-**/venv*/
-**/__pycache__/
+env/
+
+# Build Outputs
+dist/
+build/
+out/
+*.min.js
+*.min.css
+
+# Cache
+.cache/
+.parcel-cache/
+__pycache__/
 *.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# Temporary Files
+*.tmp
+*.temp
+*.bak
+*.orig
+
+# Docker
+*.env.docker
+
+# Coverage / Testing
+coverage/
+.nyc_output/
+htmlcov/
