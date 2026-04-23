@@ -6,12 +6,16 @@ on:
     paths:
       - 'training/**'
       - 'preprocessing/**'
+      - 'step-functions-pipeline.json'
   workflow_dispatch:
 
 jobs:
-  trigger:
+  deploy-and-trigger:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -19,7 +23,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1
-      
+
+      - name: Deploy Step Functions Definition
+        run: |
+          echo "Deploying updated pipeline definition to AWS..."
+          aws stepfunctions update-state-machine \
+            --state-machine-arn "arn:aws:states:us-east-1:135723932609:stateMachine:kalimati-mlops-pipeline" \
+            --definition file://step-functions-pipeline.json \
+            --region us-east-1
+          echo "Pipeline definition updated successfully!"
+
       - name: Trigger Complete Step Functions Pipeline
         run: |
           echo "Starting Complete MLOps Pipeline..."
