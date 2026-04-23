@@ -1,0 +1,23 @@
+name: Manually Trigger Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: us-east-1
+      
+      - name: Trigger Step Functions Pipeline
+        run: |
+          aws stepfunctions start-execution \
+            --state-machine-arn "arn:aws:states:us-east-1:135723932609:stateMachine:kalimati-mlops-pipeline" \
+            --region us-east-1
+          echo "✅ Pipeline started successfully!"
