@@ -1,6 +1,11 @@
-name: Manually Trigger Pipeline
+name: Trigger Complete MLOps Pipeline
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'training/**'
+      - 'preprocessing/**'
   workflow_dispatch:
 
 jobs:
@@ -15,9 +20,10 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1
       
-      - name: Trigger Step Functions Pipeline
+      - name: Trigger Complete Step Functions Pipeline
         run: |
+          echo "🚀 Starting Complete MLOps Pipeline..."
           aws stepfunctions start-execution \
             --state-machine-arn "arn:aws:states:us-east-1:135723932609:stateMachine:kalimati-mlops-pipeline" \
             --region us-east-1
-          echo "✅ Pipeline started successfully!"
+          echo "✅ Pipeline started! Check AWS Step Functions Console or your email for progress."
