@@ -22,8 +22,8 @@ jobs:
       
       - name: Trigger Complete Step Functions Pipeline
         run: |
-          echo "🚀 Starting Complete MLOps Pipeline..."
+          echo "Starting Complete MLOps Pipeline..."
           aws stepfunctions start-execution \
             --state-machine-arn "arn:aws:states:us-east-1:135723932609:stateMachine:kalimati-mlops-pipeline" \
             --region us-east-1
-          echo "✅ Pipeline started! Check AWS Step Functions Console or your email for progress."
+          echo "Pipeline started! Check AWS Step Functions Console or your email for progress."
